@@ -20,6 +20,12 @@ const Form = ({ data }: FormProps) => {
   function handleSelectChange(_: React.ChangeEvent<HTMLSelectElement>, id: string, value: string) {
     if (id === "country" && selectValues.country !== value) {
       setSelectValues((prev) => ({ ...prev, country: value, city: "", accomodationType: "" }));
+    }
+    if (id === "city" && selectValues.city !== value) {
+      setSelectValues((prev) => ({ ...prev, city: value, accomodationType: "", universityType: "" }));
+    }
+    if (id === "universityType" && selectValues.universityType !== value) {
+      setSelectValues((prev) => ({ ...prev, universityType: value, accomodationType: "" }));
     } else
       setSelectValues((prev) => ({
         ...prev,
