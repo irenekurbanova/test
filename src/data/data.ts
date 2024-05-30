@@ -1,29 +1,27 @@
-export type DataTest = {
-  countries: { name: string; id: string }[];
-  cities: { city: string[]; country_id: string }[];
-  universityType: string[];
-  accommodationType: { accommodationOption: string; country_id: string | string[] }[];
-};
-
-const id = {
-  RB: "РБ",
-  RF: "РФ",
-};
+import { Accomodation, City, Country, Payment, University, type DataTest } from "./types";
 
 export const dataTest: DataTest = {
   countries: [
-    { name: "РБ", id: id.RB },
-    { name: "РФ", id: id.RF },
+    { name: Country.RF, value: Country.RF },
+    { name: Country.RB, value: Country.RB },
   ],
   cities: [
-    { city: ["Минск", "Гомель"], country_id: id.RB },
-    { city: ["Москва", "Сочи"], country_id: id.RF },
+    { city: [City.Minsk, City.Gomel], country: Country.RB },
+    { city: [City.Moscow, City.Sochi], country: Country.RF },
   ],
-  universityType: ["Технический", "Гуманитарный"],
+  universityType: [University.Tech, University.Human],
   accommodationType: [
-    { accommodationOption: "Общежития", country_id: [id.RB, id.RF] },
-    { accommodationOption: "Аренда", country_id: [id.RF] },
-    { accommodationOption: "Не интересует", country_id: [id.RB, id.RF] },
-    { accommodationOption: "Общежития + Аренда", country_id: [id.RF] },
+    { accommodationOption: Accomodation.Dormitory, country: [Country.RB, Country.RF] },
+    { accommodationOption: Accomodation.Rent, country: [Country.RF] },
+    { accommodationOption: Accomodation["Not interested"], country: [Country.RB, Country.RF] },
+    { accommodationOption: Accomodation["Dormitory + Rent"], country: [Country.RF] },
+  ],
+  paymentType: [
+    { paymentOption: Payment.Semester, accomodation: [Accomodation.Dormitory] },
+    {
+      paymentOption: Payment.Monthly,
+      accomodation: [Accomodation.Dormitory, Accomodation["Dormitory + Rent"], Accomodation.Rent],
+    },
+    { paymentOption: Payment.Weekly, accomodation: [Accomodation.Rent] },
   ],
 };

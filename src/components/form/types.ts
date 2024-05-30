@@ -1,4 +1,4 @@
-import { DataTest } from "../../data/data";
+import { DataTest } from "../../data/types";
 
 export type FormProps = {
   data: DataTest;

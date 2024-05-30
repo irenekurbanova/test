@@ -1,74 +1,72 @@
-import { useState } from "react";
-import { FormProps } from "./types";
+import { useReducer } from "react";
 import { selectDefaultOptions } from "./constants";
 import Select from "../select/select";
 import "./form.css";
+import type { FormProps } from "./types";
+import { Accomodation, Country } from "../../data/types";
+import { ActionType, init, reducer } from "./reducer";
 
 const Form = ({ data }: FormProps) => {
-  const [selectValues, setSelectValues] = useState({
-    country: "",
-    city: "",
-    universityType: "",
-    accomodationType: "",
-  });
+  const [state, dispatch] = useReducer(reducer, init);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     console.log("Submitted");
   }
 
-  function handleSelectChange(_: React.ChangeEvent<HTMLSelectElement>, id: string, value: string) {
-    if (id === "country" && selectValues.country !== value) {
-      setSelectValues((prev) => ({ ...prev, country: value, city: "", accomodationType: "" }));
-    }
-    if (id === "city" && selectValues.city !== value) {
-      setSelectValues((prev) => ({ ...prev, city: value, accomodationType: "", universityType: "" }));
-    }
-    if (id === "universityType" && selectValues.universityType !== value) {
-      setSelectValues((prev) => ({ ...prev, universityType: value, accomodationType: "" }));
-    } else
-      setSelectValues((prev) => ({
-        ...prev,
-        [id]: value,
-      }));
+  function handleSelectChange(id: ActionType, value: string) {
+    dispatch({ type: id, payload: value });
   }
 
   const countries = data.countries.map((country) => country.name);
 
-  const cities = data.cities.find((item) => item.country_id === selectValues.country)?.city;
+  const cities = data.cities.find((item) => item.country === state.country)?.city;
 
   const accomodationOptions = data.accommodationType
-    .filter((acc) => acc.country_id.includes(selectValues.country))
+    .filter((acc) => acc.country.includes(state.country as Country))
     .map((acc) => acc.accommodationOption);
 
-  const btnDisabled = Object.values(selectValues).some((x) => x === "");
+  const paymentOptions = data.paymentType
+    .filter((acc) => acc.accomodation.includes(state.accomodationType as Accomodation))
+    .map((acc) => acc.paymentOption);
+
+  const btnDisabled = Object.values(state).some((x) => x === "");
 
   return (
     <form onSubmit={handleSubmit} className="form">
       <h1 className="h1">Заполните форму</h1>
       <Select
-        value={selectValues.country}
+        value={state.country}
         options={countries}
         name={selectDefaultOptions.country}
-        onChange={(event) => handleSelectChange(event, "country", event.target.value)}
+        onChange={(event) => handleSelectChange(ActionType.country, event.target.value)}
       />
       <Select
-        value={selectValues.city}
+        value={state.city}
         options={cities}
+        disabled={state.country === ""}
         name={selectDefaultOptions.city}
-        onChange={(event) => handleSelectChange(event, "city", event.target.value)}
+        onChange={(event) => handleSelectChange(ActionType.city, event.target.value)}
       />
       <Select
-        value={selectValues.universityType}
+        value={state.universityType}
         options={data.universityType}
         name={selectDefaultOptions.universityType}
-        onChange={(event) => handleSelectChange(event, "universityType", event.target.value)}
+        onChange={(event) => handleSelectChange(ActionType.universityType, event.target.value)}
       />
       <Select
-        value={selectValues.accomodationType}
+        value={state.accomodationType}
         options={accomodationOptions}
+        disabled={state.city === ""}
         name={selectDefaultOptions.accomodationType}
-        onChange={(event) => handleSelectChange(event, "accomodationType", event.target.value)}
+        onChange={(event) => handleSelectChange(ActionType.accomodationType, event.target.value)}
+      />
+      <Select
+        value={state.paymentType}
+        options={paymentOptions}
+        disabled={state.accomodationType === ""}
+        name={selectDefaultOptions.paymentType}
+        onChange={(event) => handleSelectChange(ActionType.paymentType, event.target.value)}
       />
       <button className="button" disabled={btnDisabled}>
         Submit
