@@ -1,3 +1,5 @@
+import { Accomodation, Payment } from "../../data/types";
+
 export enum ActionType {
   country = "country",
   city = "city",
@@ -40,8 +42,8 @@ export function reducer(state: State, action: Action): State {
       return { ...state, universityType: payload };
     }
     case ActionType.accomodationType: {
-      if (payload === "Не интересует") {
-        return { ...state, accomodationType: payload, paymentType: "N/A" };
+      if (payload === Accomodation["Not interested"]) {
+        return { ...state, accomodationType: payload, paymentType: Payment.NA };
       } else return { ...state, accomodationType: payload };
     }
     case ActionType.paymentType: {
